@@ -16,6 +16,7 @@ import java.lang.Math;
 import java.util.ArrayList;
 import java.util.Scanner;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.util.glu.GLU;
 
 /**
  *
@@ -23,8 +24,9 @@ import org.lwjgl.input.Keyboard;
  * opens the file reader for openGL and reads the file input.
  */
 public class Basic{
-    
-    //public  String inputFileName = null;
+
+    int dx = 0; //direction of x
+    int dy = 0; //direction of y
     
     //Creates the window
     private void createWindow() throws Exception{
@@ -48,6 +50,7 @@ public class Basic{
     //The render is the window that holds the display window
     private void render(){
             
+        
         while(!Display.isCloseRequested()&&!Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
             draw();
             
@@ -60,16 +63,18 @@ public class Basic{
     //Method draw sets the identity and calls the data.
     public void draw(){
   
-        
             try{
+                processInput();
                 glClear(GL_COLOR_BUFFER_BIT);
                 glLoadIdentity();
                 glPointSize(10);
-                glColor3f(0.5f,0.6f,0.7f);
+                
                 glPushMatrix();        
            
-                glBegin(GL_POLYGON);   
-                glVertex2f(-350,-350);
+                glTranslatef(dx,dy,0f);
+                glBegin(GL_POLYGON);
+                glColor3f(0.5f,0.6f,0.7f);
+                glVertex2f(350,-350);
                 glVertex2f(-350,350);
                 glVertex2f(350,350);
                 glVertex2f(350,-350);
@@ -82,6 +87,28 @@ public class Basic{
            }
     }
     
+    //The method adjusts the dx and dy values for the camera based on w,a,s,d keys
+    public void processInput(){
+        if(Keyboard.isKeyDown(Keyboard.KEY_W)){
+            dy--;
+        }
+
+        if(Keyboard.isKeyDown(Keyboard.KEY_S)){
+            dy++;
+        }
+        if(Keyboard.isKeyDown(Keyboard.KEY_A)){
+            dx++;
+        }
+        if(Keyboard.isKeyDown(Keyboard.KEY_D)){
+            dx--;
+        }
+        if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)){
+            
+        }
+        if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)){
+            
+        }
+    }
     //starts the program
     public void start(){
         
