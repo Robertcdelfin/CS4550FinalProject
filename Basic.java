@@ -3,124 +3,72 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package hw3cs4550;
+package hw3cs4450;
 
-
-
-import java.io.File;
-import java.io.FileNotFoundException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import static org.lwjgl.opengl.GL11.*;
-import java.lang.Math;
-import java.util.ArrayList;
-import java.util.Scanner;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.glu.GLU;
 
 /**
  *
  * The basic method that is a addition to the tutorial on openGl. This class 
- * opens the file reader for openGL and reads the file input.
+ * starts the drawing board for the shape
  */
-public class Basic{
-
-    int dx = 0; //direction of x
-    int dy = 0; //direction of y
+public class Basic {
     
+    
+    //Initializes the GL libraru.
+    public void initGL(DisplayMode displayMode) 
+    {
+        
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f); //clears the color
+	glMatrixMode(GL_PROJECTION); //projects the matrix
+	glLoadIdentity(); //load
+	GLU.gluPerspective(100.0f, (float)displayMode.getWidth()/(float) //sets the perspective for the window
+	displayMode.getHeight(), 0.1f, 300.0f); //display dimension in float values
+	glMatrixMode(GL_MODELVIEW);
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+    }
+
     //Creates the window
-    private void createWindow() throws Exception{
-        Display.setFullscreen(false);
-        Display.setDisplayMode(new DisplayMode(640,480));
-        Display.setTitle("Final Project CS4550");
-        Display.create();
-    }
-    
-    //intializes the GL library
-    private void initGL(){
-        glClearColor(0.0f,0.0f,0.0f, 0.0f);
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glOrtho(0,640,0,480,1,-1);
-        glMatrixMode(GL_MODELVIEW);
-        glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
+    public DisplayMode createWindow() throws Exception
+    {
+	Display.setFullscreen(false);
+	DisplayMode d[] = Display.getAvailableDisplayModes();
+        DisplayMode displayMode = null;
+        //gives the size for the window 
+	for (int i = 0; i < d.length; i++) 
+        {
+	    if (d[i].getWidth() == 640
+		&& d[i].getHeight() == 480
+		&& d[i].getBitsPerPixel() == 32) 
+            {
+		displayMode = d[i];
+		break;
+	    }
+	}
         
+	Display.setDisplayMode(displayMode);
+	Display.setTitle("Final Project Checkpoint 1");
+	Display.create();
+        return displayMode;
     }
     
-    //The render is the window that holds the display window
-    private void render(){
+    public void startDrawing(){
+               
+        FPCameraController fp;
+        DisplayMode displayMode = null;
+        try {
+            displayMode = createWindow();
+            initGL(displayMode);
+            fp = new FPCameraController(0f, 0f, 0f);
+            fp.gameLoop();
             
-        
-        while(!Display.isCloseRequested()&&!Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
-            draw();
-            
-        }
-         
-        Display.destroy();
-    }
-    
-     
-    //Method draw sets the identity and calls the data.
-    public void draw(){
-  
-            try{
-                processInput();
-                glClear(GL_COLOR_BUFFER_BIT);
-                glLoadIdentity();
-                glPointSize(10);
-                
-                glPushMatrix();        
-           
-                glTranslatef(dx,dy,0f);
-                glBegin(GL_POLYGON);
-                glColor3f(0.5f,0.6f,0.7f);
-                glVertex2f(350,-350);
-                glVertex2f(-350,350);
-                glVertex2f(350,350);
-                glVertex2f(350,-350);
-                glEnd();
-                glPopMatrix();
-                Display.update();
-                Display.sync(60);
-                
-            }catch(Exception e){
-           }
-    }
-    
-    //The method adjusts the dx and dy values for the camera based on w,a,s,d keys
-    public void processInput(){
-        if(Keyboard.isKeyDown(Keyboard.KEY_W)){
-            dy--;
-        }
-
-        if(Keyboard.isKeyDown(Keyboard.KEY_S)){
-            dy++;
-        }
-        if(Keyboard.isKeyDown(Keyboard.KEY_A)){
-            dx++;
-        }
-        if(Keyboard.isKeyDown(Keyboard.KEY_D)){
-            dx--;
-        }
-        if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)){
-            
-        }
-        if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)){
-            
-        }
-    }
-    //starts the program
-    public void start(){
-        
-        try{
-           createWindow(); 
-           initGL();
-           //System.out.println("Start method in basic");
-            //createWindow();
-            render();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+    
+    
 }
-
